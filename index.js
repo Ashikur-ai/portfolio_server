@@ -31,6 +31,8 @@ async function run() {
 
     const projectCollection = client.db('portfolio').collection('projects');
 
+    const testimonialCollection = client.db('portfolio').collection('testimonials');
+
     // 1. Service api 
 
     app.post('/service', async (req, res) => {
@@ -70,6 +72,47 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await serviceCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    // 2. Testimonial api
+
+    app.post('/testimonial', async (req, res) => {
+      const data = req.body;
+      const result = await testimonialCollection.insertOne(data);
+      res.send(result);
+    })
+
+    app.get('/testimonial', async (req, res) => {
+      const result = await testimonialCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/testimonial/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await testimonialCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/testimonial/:id', async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const query = { _id : new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          ...data
+        }
+      }
+      const result = await testimonialCollection.updateOne(query, updatedInfo, options);
+      res.send(result);
+    })
+
+    app.delete('/testimonial/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await testimonialCollection.deleteOne(query);
       res.send(result);
     })
 
