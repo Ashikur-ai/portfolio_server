@@ -29,15 +29,17 @@ async function run() {
 
     const serviceCollection = client.db('portfolio').collection('services');
 
-    const projectCollection = client.db('portfolio').collection('projects');
+  
 
     const testimonialCollection = client.db('portfolio').collection('testimonials');
+
+    const projectCollection = client.db('portfolio').collection('projects');
 
     // 1. Service api 
 
     app.post('/service', async (req, res) => {
       const data = req.body;
-      console.log(data);
+      // console.log(data);
       const result = await serviceCollection.insertOne(data);
       res.send(result);
     })
@@ -116,6 +118,45 @@ async function run() {
       res.send(result);
     })
 
+    // 3. project api 
+    app.post('/project', async (req, res) => {
+      const data = req.body;
+      const result = await projectCollection.insertOne(data);
+      res.send(result);
+    })
+
+    app.get('/project', async (req, res) => {
+      const result = await projectCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/project/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await projectCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/project/:id', async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          ...data
+        }
+      }
+      const result = await projectCollection.updateOne(query, updatedInfo, options);
+      res.send(result);
+    })
+
+    app.delete('/project/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await projectCollection.deleteOne(query);
+      res.send(result);
+    })
 
     // await client.db("admin").command({ ping: 1 });
     // console.log("Pinged your deployment. You successfully connected to MongoDB!");
