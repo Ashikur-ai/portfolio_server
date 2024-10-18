@@ -10,6 +10,7 @@ app.use(express.json());
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const req = require('express/lib/request');
 const uri = `mongodb+srv://${process.env.db_user}:${process.env.db_pass}@cluster0.bpilnp1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -34,6 +35,8 @@ async function run() {
     const testimonialCollection = client.db('portfolio').collection('testimonials');
 
     const projectCollection = client.db('portfolio').collection('projects');
+    const skillCollection = client.db('portfolio').collection('skills');
+    const skillRelatedProjectCollection = client.db('portfolio').collection('skillRelatedProjects');
 
     // 1. Service api 
 
@@ -155,6 +158,91 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await projectCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    // 4. skills api 
+    app.post('/skills', async (req, res) => {
+      const data = req.body;
+      const result = await skillCollection.insertOne(data);
+      res.send(result);
+    })
+
+    app.get('/skills', async (req, res) => {
+      const result = await skillCollection.find().toArray();
+      res.send(result);
+    })
+
+
+    app.get('/skills/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await skillCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/skills/:id', async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          ...data
+        }
+      }
+
+      const result = await skillCollection.updateOne(query, updatedInfo, options);
+      res.send(result);
+
+    })
+
+    app.delete('/skills/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await skillCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    // 5. skill related projects api 
+    app.post('/skill-project', async (req, res) => {
+      const data = req.body;
+      const result = await skillRelatedProjectCollection.insertOne(data);
+      res.send(result);
+    })
+
+    app.get('/skill-project', async (req, res) => {
+      const result = await skillRelatedProjectCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/skill-project/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await skillRelatedProjectCollection.findOne(query);
+      res.send(result);
+    })
+
+
+    app.put('/skill-project/:id', async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          ...data
+        }
+      }
+
+      const result = await skillRelatedProjectCollection.updateOne(query, updatedInfo, options);
+      res.send(result)
+    })
+
+    app.delete('/skill-project/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await skillRelatedProjectCollection.deleteOne(query);
       res.send(result);
     })
 
