@@ -37,6 +37,8 @@ async function run() {
     const projectCollection = client.db('portfolio').collection('projects');
     const skillCollection = client.db('portfolio').collection('skills');
     const skillRelatedProjectCollection = client.db('portfolio').collection('skillRelatedProjects');
+    const stackOverflowCollection = client.db('portfolio').collection('stackOverflows');
+    const topProjectCollection = client.db('portfolio').collection('topProjects');
 
     // 1. Service api 
 
@@ -243,6 +245,89 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await skillRelatedProjectCollection.deleteOne(query);
+      res.send(result);
+    })
+
+
+    // 6. stack overflow related api 
+    app.post('/stack-overflow', async (req, res) => {
+      const data = req.body;
+      const result = await stackOverflowCollection.insertOne(data);
+      res.send(result);
+    })
+
+    app.get('/stack-overflow', async (req, res) => {
+      const result = await stackOverflowCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/stack-overflow/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await stackOverflowCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/stack-overflow/:id', async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          ...data
+        }
+      }
+
+      const result = await stackOverflowCollection.updateOne(query, updatedInfo, options);
+      res.send(result);
+    })
+
+    app.delete('/stack-overflow/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await stackOverflowCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    // 6. Top 5 projects 
+    app.post('/top-project', async (req, res) => {
+      const data = req.body;
+      const result = await topProjectCollection.insertOne(data);
+      res.send(result);
+    })
+
+    app.get('/top-project', async (req, res) => {
+      const result = await topProjectCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/top-project/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await topProjectCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/top-project/:id', async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedInfo = {
+        $set: {
+          ...data
+        }
+      }
+
+      const result = await topProjectCollection.updateOne(query, updatedInfo, options);
+      res.send(result);
+    })
+
+    app.delete('/top-project/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await topProjectCollection.deleteOne(query);
       res.send(result);
     })
 
