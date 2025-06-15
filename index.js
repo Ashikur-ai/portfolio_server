@@ -64,6 +64,13 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/project_by_service/:service_id', async (req, res) => {
+      const id = req.params.service_id;
+      const query = { service_id: id };
+      const result = await projectCollection.find(query).toArray();
+      res.send(result);
+    })
+
     app.put('/service/:id', async (req, res) => {
       const data = req.body;
       const id = req.params.id;
@@ -349,9 +356,9 @@ async function run() {
         total_amount: data.amount,
         currency: 'BDT',
         tran_id: trxId,
-        success_url: 'https://portfolio-server-opal-alpha.vercel.app/success-payment',
-        fail_url: 'https://portfolio-server-opal-alpha.vercel.app/fail',
-        cancel_url: 'https://portfolio-server-opal-alpha.vercel.app/cancel',
+        success_url: 'https://resume-server-2.vercel.app/success-payment',
+        fail_url: 'https://resume-server-2.vercel.app/fail',
+        cancel_url: 'https://resume-server-2.vercel.app/cancel',
         cus_name: ' Customer Name',
         cus_email: 'cust @yahoo.com',
         cus_add1: 'Dhaka',
